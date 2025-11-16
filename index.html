@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Join the Testers Team</title>
+  <style>
+    :root {
+      --accent: #7c3aed;
+      --glass-bg: rgba(255, 255, 255, 0.1);
+      --border: rgba(255, 255, 255, 0.2);
+      --shadow: 0 0 40px rgba(124, 58, 237, 0.3);
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      background: radial-gradient(circle at 20% 20%, #0f172a, #050a15);
+      color: #e2e8f0;
+      overflow: hidden;
+    }
+
+    .glass-card {
+      backdrop-filter: blur(16px) saturate(180%);
+      -webkit-backdrop-filter: blur(16px) saturate(180%);
+      background-color: var(--glass-bg);
+      border-radius: 16px;
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 32px;
+      width: 90%;
+      max-width: 460px;
+      text-align: center;
+      animation: fadeIn 1s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: scale(0.95); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    h1 {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+
+    p {
+      color: #94a3b8;
+      font-size: 0.95rem;
+      margin-bottom: 24px;
+    }
+
+    input {
+      width: 100%;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      background: rgba(255, 255, 255, 0.08);
+      color: white;
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s ease;
+    }
+
+    input:focus {
+      border-color: var(--accent);
+    }
+
+    button {
+      background: linear-gradient(135deg, var(--accent), #5b21b6);
+      border: none;
+      border-radius: 10px;
+      padding: 12px 16px;
+      color: white;
+      font-weight: 600;
+      width: 100%;
+      cursor: pointer;
+      transition: opacity 0.3s;
+    }
+
+    button:hover {
+      opacity: 0.85;
+    }
+
+    .note {
+      font-size: 0.85rem;
+      color: #9ca3af;
+      margin-top: 12px;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .thank-card h1 {
+      font-size: 1.8rem;
+      margin-bottom: 12px;
+    }
+
+    .thank-card p {
+      color: #a5b4fc;
+      font-size: 1rem;
+      margin-bottom: 28px;
+    }
+
+    .thank-card a {
+      display: inline-block;
+      background: linear-gradient(135deg, #7c3aed, #5b21b6);
+      color: white;
+      text-decoration: none;
+      padding: 12px 20px;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: opacity 0.3s;
+    }
+
+    .thank-card a:hover {
+      opacity: 0.85;
+    }
+  </style>
+</head>
+<body>
+  <div class="glass-card" id="signupCard">
+    <h1>Join Our Testers Team — It's Free</h1>
+    <p>Enter your full name and email to get early access to builds and updates.</p>
+
+    <form id="signupForm" novalidate>
+      <input type="text" id="fullname" placeholder="Full Name" required>
+      <input type="email" id="email" placeholder="Email Address" required>
+      <button type="submit" id="submitBtn">Join Testers</button>
+    </form>
+
+    <div id="feedback" class="note"></div>
+  </div>
+
+  <div class="glass-card thank-card hidden" id="thankCard">
+    <h1>Thank You for Joining!</h1>
+    <p>You’ll receive an email with early builds and game updates soon.</p>
+    <a href="#" id="backBtn">Back</a>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'testers_signups_v1';
+    const form = document.getElementById('signupForm');
+    const feedback = document.getElementById('feedback');
+    const signupCard = document.getElementById('signupCard');
+    const thankCard = document.getElementById('thankCard');
+    const backBtn = document.getElementById('backBtn');
+
+    function loadStored() {
+      try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]'); }
+      catch { return []; }
+    }
+
+    function saveStored(arr) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(arr));
+    }
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const name = document.getElementById('fullname').value.trim();
+      const email = document.getElementById('email').value.trim();
+
+      if (!name || !email) {
+        feedback.textContent = 'Please fill in both fields.';
+        return;
+      }
+
+      const payload = { fullname: name, email: email, ts: new Date().toISOString() };
+      const stored = loadStored();
+      stored.push(payload);
+      saveStored(stored);
+
+      signupCard.classList.add('hidden');
+      thankCard.classList.remove('hidden');
+    });
+
+    backBtn.addEventListener('click', (e) => {
+      e.preventDefault();
+      thankCard.classList.add('hidden');
+      signupCard.classList.remove('hidden');
+      form.reset();
+      feedback.textContent = '';
+    });
+  </script>
+</body>
+</html>
